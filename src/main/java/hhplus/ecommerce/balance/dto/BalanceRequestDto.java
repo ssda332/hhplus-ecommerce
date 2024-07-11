@@ -1,7 +1,10 @@
 package hhplus.ecommerce.balance.dto;
 
+import lombok.Builder;
+
+@Builder
 public record BalanceRequestDto(
-        Long userId,
+        Long memberId,
         Long amount
 ) {
 }
