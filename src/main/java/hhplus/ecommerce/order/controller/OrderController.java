@@ -1,9 +1,7 @@
 package hhplus.ecommerce.order.controller;
 
-import hhplus.ecommerce.order.dto.OrderRequestDto;
-import hhplus.ecommerce.order.dto.OrderResponseDto;
-import hhplus.ecommerce.order.dto.PaymentRequestDto;
-import hhplus.ecommerce.order.dto.PaymentResponseDto;
+import hhplus.ecommerce.order.controller.dto.OrderRequestDto;
+import hhplus.ecommerce.order.controller.dto.OrderResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -31,14 +29,4 @@ public class OrderController {
                 productPrice, createDate);
     }
 
-    // 결제 API
-    @PostMapping("/payment")
-    public PaymentResponseDto payment(@RequestBody PaymentRequestDto paymentRequest) {
-        Long paymentId = 1L;
-        String status = "SUCCESS";
-        LocalDateTime paymentDate = LocalDateTime.now();
-
-        return new PaymentResponseDto(paymentId, paymentRequest.userId(), paymentRequest.orderId(),
-                paymentRequest.amount(), status, paymentDate);
-    }
 }

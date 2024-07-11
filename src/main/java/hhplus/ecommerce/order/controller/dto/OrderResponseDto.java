@@ -1,4 +1,4 @@
-package hhplus.ecommerce.order.dto;
+package hhplus.ecommerce.order.controller.dto;
 
 import java.time.LocalDateTime;
 
