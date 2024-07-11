@@ -1,8 +1,11 @@
-package hhplus.ecommerce.order.dto;
+package hhplus.ecommerce.balance.infrastructure;
+
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
-public record PaymentResponseDto(
+@Builder
+public record PaymentInfraResponseDto(
         Long paymentId,
         Long userId,
         Long orderId,
