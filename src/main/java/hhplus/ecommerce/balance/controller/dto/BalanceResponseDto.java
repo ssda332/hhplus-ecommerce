@@ -1,4 +1,4 @@
-package hhplus.ecommerce.balance.dto;
+package hhplus.ecommerce.balance.controller.dto;
 
 import lombok.Builder;
 
