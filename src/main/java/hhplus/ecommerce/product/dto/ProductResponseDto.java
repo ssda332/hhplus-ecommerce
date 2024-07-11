@@ -1,15 +1,13 @@
 package hhplus.ecommerce.product.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 
+@Data
 @Builder
-@RequiredArgsConstructor
-@AllArgsConstructor
-public record ProductResponseDto(
-    long id
-
-) {
-
+public class ProductResponseDto {
+    private Long id;
+    private String name;
+    private Long price;
+    private Long totalStock;
 }
