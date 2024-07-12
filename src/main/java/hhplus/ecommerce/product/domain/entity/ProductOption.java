@@ -3,7 +3,6 @@ package hhplus.ecommerce.product.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
@@ -26,6 +25,6 @@ public class ProductOption {
     @Column(nullable = false)
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ProductOptionStock> productOptionStocks;
+    @OneToOne(mappedBy = "productOption", cascade = CascadeType.ALL, orphanRemoval = true)
+    private ProductOptionStock productOptionStock;
 }

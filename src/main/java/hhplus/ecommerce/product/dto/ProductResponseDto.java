@@ -1,13 +1,13 @@
 package hhplus.ecommerce.product.dto;
 
-import lombok.Builder;
-import lombok.Data;
+import java.time.LocalDateTime;
+import java.util.List;
 
-@Data
-@Builder
-public class ProductResponseDto {
-    private Long id;
-    private String name;
-    private Long price;
-    private Long totalStock;
+public record ProductResponseDto(
+        Long id,
+        String name,
+        Long price,
+        LocalDateTime createDate,
+        List<ProductDetailResponseDto> productDetails
+) {
 }

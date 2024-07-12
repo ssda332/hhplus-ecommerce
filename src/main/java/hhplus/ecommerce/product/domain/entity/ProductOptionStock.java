@@ -17,7 +17,7 @@ public class ProductOptionStock {
     @Column(nullable = false)
     private Long stock;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_option_id", nullable = false)
     private ProductOption productOption;
 }

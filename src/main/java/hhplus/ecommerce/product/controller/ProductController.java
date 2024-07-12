@@ -38,7 +38,7 @@ public class ProductController {
     // 상품 정보 조회 API
     @GetMapping("/{id}")
     public ProductResponseDto getProductDetail(@PathVariable Long id) {
-        return productMapper.toDto(productService.getProductById(id));
+        return productMapper.toProductResponseDto(productService.getProductById(id));
     }
 
 }
