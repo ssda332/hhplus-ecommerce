@@ -61,7 +61,8 @@ public class OrderService {
             }
 
             // 차감금액 계산
-            sumPrice += item.getProductPrice();
+            Long calculatePrice = item.getProductCount() * item.getProductPrice();
+            sumPrice += calculatePrice;
         }
 
         // 잔액확인
