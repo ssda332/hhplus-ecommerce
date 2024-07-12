@@ -1,13 +1,13 @@
 package hhplus.ecommerce.order.mapper;
 
 import hhplus.ecommerce.order.controller.dto.*;
+import hhplus.ecommerce.order.domain.dto.OrderAppRequest;
 import hhplus.ecommerce.order.domain.entity.Order;
 import hhplus.ecommerce.order.domain.entity.OrderItem;
-import hhplus.ecommerce.order.domain.entity.OrderSheet;
-import hhplus.ecommerce.order.domain.entity.OrderSheetItem;
+import hhplus.ecommerce.ordersheet.domain.entity.OrderSheet;
+import hhplus.ecommerce.ordersheet.domain.entity.OrderSheetItem;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 import java.util.List;
 

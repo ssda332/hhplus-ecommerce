@@ -1,4 +1,4 @@
-package hhplus.ecommerce.order.controller.dto;
+package hhplus.ecommerce.order.domain.dto;
 
 public record OrderAppRequest(
         Long orderSheetId,

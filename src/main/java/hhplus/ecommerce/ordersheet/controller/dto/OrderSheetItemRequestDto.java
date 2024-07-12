@@ -1,4 +1,4 @@
-package hhplus.ecommerce.order.controller.dto;
+package hhplus.ecommerce.ordersheet.controller.dto;
 
 public record OrderSheetItemRequestDto(
         Long productId,

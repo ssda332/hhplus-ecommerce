@@ -1,6 +1,6 @@
-package hhplus.ecommerce.order.domain.repository;
+package hhplus.ecommerce.ordersheet.domain.repository;
 
-import hhplus.ecommerce.order.domain.entity.OrderSheet;
+import hhplus.ecommerce.ordersheet.domain.entity.OrderSheet;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,10 +1,10 @@
-package hhplus.ecommerce.order.mapper;
+package hhplus.ecommerce.ordersheet.mapper;
 
-import hhplus.ecommerce.order.controller.dto.OrderSheetRequestDto;
-import hhplus.ecommerce.order.controller.dto.OrderSheetItemRequestDto;
-import hhplus.ecommerce.order.controller.dto.OrderSheetResponseDto;
-import hhplus.ecommerce.order.domain.entity.OrderSheet;
-import hhplus.ecommerce.order.domain.entity.OrderSheetItem;
+import hhplus.ecommerce.ordersheet.controller.dto.OrderSheetRequestDto;
+import hhplus.ecommerce.ordersheet.controller.dto.OrderSheetItemRequestDto;
+import hhplus.ecommerce.ordersheet.controller.dto.OrderSheetResponseDto;
+import hhplus.ecommerce.ordersheet.domain.entity.OrderSheet;
+import hhplus.ecommerce.ordersheet.domain.entity.OrderSheetItem;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")

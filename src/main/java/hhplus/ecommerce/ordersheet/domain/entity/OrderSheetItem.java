@@ -1,4 +1,4 @@
-package hhplus.ecommerce.order.domain.entity;
+package hhplus.ecommerce.ordersheet.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
