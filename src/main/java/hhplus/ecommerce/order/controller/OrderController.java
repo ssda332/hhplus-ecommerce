@@ -2,31 +2,27 @@ package hhplus.ecommerce.order.controller;
 
 import hhplus.ecommerce.order.controller.dto.OrderRequestDto;
 import hhplus.ecommerce.order.controller.dto.OrderResponseDto;
+import hhplus.ecommerce.order.domain.service.OrderService;
+import hhplus.ecommerce.order.mapper.OrderMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDateTime;
-
 @RestController
 @RequestMapping("/order")
 @RequiredArgsConstructor
 public class OrderController {
 
+    private final OrderService orderService;
+    private final OrderMapper orderMapper;
+
     // 주문 API
     @PostMapping("")
-    public OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequest) {
-        Long orderId = 1L;
-        String productName = "Sample Product";
-        String productOptionName = "Sample Option";
-        Long productPrice = 2000L;
-        LocalDateTime createDate = LocalDateTime.now();
+    public OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequestDto) {
 
-        return new OrderResponseDto(orderId, orderRequest.userId(), orderRequest.productId(), productName,
-                orderRequest.productOptionId(), productOptionName, orderRequest.productCount(),
-                productPrice, createDate);
+        return orderMapper.toDto(orderService.createOrder(orderMapper.toAppDto(orderRequestDto)));
     }
 
 }

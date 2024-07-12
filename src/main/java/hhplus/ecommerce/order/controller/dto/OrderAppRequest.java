@@ -1,7 +1,8 @@
 package hhplus.ecommerce.order.controller.dto;
 
-public record OrderRequestDto(
+public record OrderAppRequest(
         Long orderSheetId,
         Long memberId
 ) {
+
 }

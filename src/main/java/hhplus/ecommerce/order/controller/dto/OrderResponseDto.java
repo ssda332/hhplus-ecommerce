@@ -1,16 +1,15 @@
 package hhplus.ecommerce.order.controller.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record OrderResponseDto(
-    Long orderId,
-    Long userId,
-    Long productId,
-    String productName,
-    Long productOptionId,
-    String productOptionName,
-    Long productCount,
-    Long productPrice,
-    LocalDateTime createDate
-) {
-}
+        Long id,
+        Long memberId,
+        Long priceSum,
+        String address,
+        String phone,
+        String comment,
+        LocalDateTime createDate,
+        List<OrderItemResponseDto> orderItems
+) {}
