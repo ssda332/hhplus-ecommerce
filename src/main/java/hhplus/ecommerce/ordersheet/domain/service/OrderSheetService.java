@@ -24,7 +24,6 @@ public class OrderSheetService {
     public OrderSheet createOrderSheet(OrderSheet orderSheet) {
 
         // 재고확인
-        // 재고확인
         List<OrderSheetItem> orderSheetItems = orderSheet.getOrderSheetItems();
 
         for (OrderSheetItem item : orderSheetItems) {
