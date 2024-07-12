@@ -16,12 +16,5 @@ https://raw.githubusercontent.com/ssda332/hhplus-3/8288fe3f0e504af41aab7ec671ae8
 ### API 명세
 https://github.com/ssda332/hhplus-3/pull/19/commits/e73d7c487a2fb77a24c67fe512cd1b5d2b865d2c
 
-![](https://github.com/user-attachments/assets/429dbb66-a48f-481d-bdaa-1fbec8442574)
-![](https://github.com/user-attachments/assets/cd74de53-c135-4b08-ba10-685a0e2e2678)
-![](https://github.com/user-attachments/assets/250219d9-fa90-41e2-ba15-ec1c08215a71)
-![](https://github.com/user-attachments/assets/52bcd720-2a1d-44e8-bbfb-88dd5c26497a)
-![](https://github.com/user-attachments/assets/0e7cfa17-98ba-4297-8ec1-6aab3a2b9c5a)
-![](https://github.com/user-attachments/assets/caab8d4e-f4d9-412d-904c-d9a081f14b96)
-![](https://github.com/user-attachments/assets/a0a70fae-b12e-44d1-b81c-f141001d38fe)
-![](https://github.com/user-attachments/assets/197316ae-e871-4005-b8aa-f35b0dd62a51)
-![](https://github.com/user-attachments/assets/b51ec5d2-e198-4c9f-a97c-d5b71dea6de8)
+### swagger
+https://raw.githubusercontent.com/ssda332/hhplus-ecommerce/ac73089715e457f33bd000682ff9a53a31120273/src/main/resources/doc/swaggerFull.png
