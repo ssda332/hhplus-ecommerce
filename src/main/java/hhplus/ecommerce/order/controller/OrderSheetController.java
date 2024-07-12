@@ -22,6 +22,6 @@ public class OrderSheetController {
 
     @GetMapping("/{id}")
     public OrderSheetResponseDto getOrderSheet(@PathVariable Long id) {
-        return orderSheetService.getOrderSheetById(id);
+        return orderSheetMapper.toResponseDto(orderSheetService.getOrderSheetById(id));
     }
 }
