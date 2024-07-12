@@ -6,6 +6,7 @@ import hhplus.ecommerce.exception.MemberNotFoundException;
 import hhplus.ecommerce.order.domain.dto.OrderAppRequest;
 import hhplus.ecommerce.order.domain.entity.Order;
 import hhplus.ecommerce.order.domain.entity.OrderItem;
+import hhplus.ecommerce.order.domain.repository.OrderItemRepository;
 import hhplus.ecommerce.ordersheet.domain.entity.OrderSheet;
 import hhplus.ecommerce.ordersheet.domain.entity.OrderSheetItem;
 import hhplus.ecommerce.order.domain.repository.OrderRepository;
@@ -16,6 +17,7 @@ import hhplus.ecommerce.product.domain.entity.ProductOption;
 import hhplus.ecommerce.product.domain.entity.ProductOptionStock;
 import hhplus.ecommerce.product.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class OrderService {
 
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final OrderSheetRepository orderSheetRepository;
     private final ProductRepository productRepository;
     private final BalanceRepository balanceRepository;
@@ -90,6 +93,11 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         return savedOrder;
+    }
+
+    @Transactional(readOnly = true)
+    public List<OrderItem> getTopProducts() {
+        return orderItemRepository.findTopProducts(PageRequest.of(0, 5));
     }
 
 }

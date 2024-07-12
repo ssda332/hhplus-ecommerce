@@ -1,5 +1,6 @@
 package hhplus.ecommerce.product.mapper;
 
+import hhplus.ecommerce.order.domain.entity.OrderItem;
 import hhplus.ecommerce.product.domain.entity.Product;
 import hhplus.ecommerce.product.domain.entity.ProductOption;
 import hhplus.ecommerce.product.dto.ProductDetailResponseDto;
@@ -14,6 +15,13 @@ import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface ProductMapper {
+
+    @Mapping(target = "id", source = "orderItem.productId")
+    @Mapping(target = "name", source = "orderItem.productName")
+    @Mapping(target = "price", source = "orderItem.productPrice")
+    @Mapping(target = "createDate", source = "orderItem.createDate")
+    @Mapping(target = "stock", source = "orderItem.productCount")
+    ProductDetailResponseDto orderItemtoProductDetailDto(OrderItem orderItem);
 
     @Mapping(target = "id", source = "product.id")
     @Mapping(target = "name", source = "product.name")

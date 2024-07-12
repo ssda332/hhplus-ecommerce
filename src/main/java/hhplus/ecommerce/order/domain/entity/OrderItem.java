@@ -20,6 +20,9 @@ public class OrderItem {
     private Order order;
 
     @Column(nullable = false)
+    private Long productId;
+
+    @Column(nullable = false)
     private String productName;
 
     @Column(nullable = false)
@@ -36,4 +39,11 @@ public class OrderItem {
 
     @Column(nullable = false)
     private LocalDateTime createDate;
+
+    public OrderItem(Long productId, String productName, Long productPrice, Long productCount) {
+        this.productId = productId;
+        this.productName = productName;
+        this.productPrice = productPrice;
+        this.productCount = productCount;
+    }
 }
