@@ -3,7 +3,7 @@ package hhplus.ecommerce.balance.service;
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.domain.repository.BalanceRepository;
 import hhplus.ecommerce.balance.domain.service.BalanceService;
-import hhplus.ecommerce.exception.MemberNotFoundException;
+import hhplus.ecommerce.balance.exception.MemberNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

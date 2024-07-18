@@ -5,7 +5,7 @@ import hhplus.ecommerce.balance.domain.repository.BalanceRepository;
 import hhplus.ecommerce.balance.infrastructure.ExternalPaymentStub;
 import hhplus.ecommerce.balance.infrastructure.PaymentInfraResponseDto;
 import hhplus.ecommerce.balance.mapper.BalanceMapper;
-import hhplus.ecommerce.exception.MemberNotFoundException;
+import hhplus.ecommerce.balance.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +30,7 @@ public class BalanceService {
         Balance current = balanceRepository.findByMemberId(memberId).orElseThrow(() -> new MemberNotFoundException("사용자가 존재하지 않습니다."));
         Long sum = current.getAmount() + entity.getAmount();
 
-        current.setAmount(sum);
+        current.chargeAmount(sum);
         return current;
     }
 

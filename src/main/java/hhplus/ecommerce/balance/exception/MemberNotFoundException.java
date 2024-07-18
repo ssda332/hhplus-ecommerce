@@ -1,4 +1,4 @@
-package hhplus.ecommerce.exception;
+package hhplus.ecommerce.balance.exception;
 
 public class MemberNotFoundException extends RuntimeException {
     public MemberNotFoundException(String message) {

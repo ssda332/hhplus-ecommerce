@@ -7,19 +7,24 @@ import hhplus.ecommerce.balance.domain.service.BalanceService;
 import hhplus.ecommerce.balance.controller.dto.BalanceRequestDto;
 import hhplus.ecommerce.balance.controller.dto.BalanceResponseDto;
 import hhplus.ecommerce.balance.mapper.BalanceMapper;
-import hhplus.ecommerce.exception.MemberNotFoundException;
+import hhplus.ecommerce.config.WebConfig;
+import hhplus.ecommerce.balance.exception.MemberNotFoundException;
+import hhplus.ecommerce.member.interceptor.MemberInterceptor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doReturn;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -34,6 +39,15 @@ public class BalanceControllerTest {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    @Configuration
+    static class TestConfig {
+        @Bean
+        public WebConfig webConfig(MemberInterceptor memberInterceptor) {
+            return new WebConfig(memberInterceptor);
+        }
+    }
+
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -42,6 +56,9 @@ public class BalanceControllerTest {
 
     @MockBean
     private BalanceMapper balanceMapper;
+
+    @MockBean
+    private MemberInterceptor memberInterceptor;
 
     @Test
     @DisplayName("잔액 조회 성공")
@@ -79,20 +96,21 @@ public class BalanceControllerTest {
     void successChargeBalance() throws Exception {
         //given
         String url = "/balance/charge";
-        BalanceRequestDto requestDto = BalanceRequestDto.builder()
-                .memberId(1L)
-                .amount(100L)
-                .build();
+        Long memberId = 1L;
+        Long amount = 100L;
 
         Balance balance = Balance.builder()
-                .memberId(1L)
+                .memberId(memberId)
                 .amount(150L)
                 .build();
 
         BalanceResponseDto responseDto = BalanceResponseDto.builder()
-                .memberId(1L)
-                .amount(150L)
+                .memberId(memberId)
+                .amount(250L)
                 .build();
+
+        // Mock 인터셉터 동작
+        given(memberInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
         //when
         given(balanceService.chargeBalance(any(Balance.class))).willReturn(balance);
@@ -100,15 +118,16 @@ public class BalanceControllerTest {
         given(balanceMapper.toEntity(any(BalanceRequestDto.class))).willReturn(balance);
 
         ResultActions actions = mockMvc.perform(post(url)
-                .content(objectMapper.writeValueAsString(requestDto))
+                .header("MEMBER_ID", memberId)
+                .param("amount", String.valueOf(amount))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON));
 
         //then
         actions.andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.memberId").value(1L))
-                .andExpect(jsonPath("$.amount").value(150L));
+                .andExpect(jsonPath("$.memberId").value(memberId))
+                .andExpect(jsonPath("$.amount").value(250L));
     }
 
     @Test
