@@ -1,5 +1,7 @@
 package hhplus.ecommerce.product.domain.entity;
 
+import hhplus.ecommerce.ordersheet.domain.entity.OrderSheetItem;
+import hhplus.ecommerce.product.exception.ProductOptionNotFoundException;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -27,4 +29,14 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ProductOption> productOptions;
+
+    public void decreaseStock(OrderSheetItem item) {
+        for (ProductOption productOption : this.productOptions) {
+            if (productOption.getId().equals(item.getProductOptionId())) {
+                productOption.decreaseStock(item);
+                return;
+            }
+        }
+        throw new ProductOptionNotFoundException("상품 옵션 없음");
+    }
 }

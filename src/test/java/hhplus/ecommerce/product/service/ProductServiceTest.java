@@ -36,7 +36,7 @@ public class ProductServiceTest {
     private OrderItemRepository orderItemRepository;
 
     private Product product;
-    private List<OrderItem> orderItems;
+    private List<Product> products;
 
     @BeforeEach
     void setUp() {
@@ -46,21 +46,14 @@ public class ProductServiceTest {
                 .price(1000L)
                 .build();
 
-        orderItems = Arrays.asList(
-                OrderItem.builder().productId(5L).productName("Product 5").productPrice(500L).productCount(6L).build(),
-                OrderItem.builder().productId(1L).productName("Product 1").productPrice(100L).productCount(10L).build(),
-                OrderItem.builder().productId(3L).productName("Product 3").productPrice(300L).productCount(8L).build(),
-                OrderItem.builder().productId(7L).productName("Product 7").productPrice(700L).productCount(4L).build(),
-                OrderItem.builder().productId(2L).productName("Product 2").productPrice(200L).productCount(9L).build(),
-                OrderItem.builder().productId(6L).productName("Product 6").productPrice(600L).productCount(5L).build(),
-                OrderItem.builder().productId(9L).productName("Product 9").productPrice(900L).productCount(2L).build(),
-                OrderItem.builder().productId(10L).productName("Product 10").productPrice(1000L).productCount(1L).build(),
-                OrderItem.builder().productId(4L).productName("Product 4").productPrice(400L).productCount(7L).build(),
-                OrderItem.builder().productId(8L).productName("Product 8").productPrice(800L).productCount(3L).build()
+        products = Arrays.asList(
+                Product.builder().id(1L).name("Product 1").price(100L).build(),
+                Product.builder().id(2L).name("Product 2").price(200L).build(),
+                Product.builder().id(3L).name("Product 3").price(300L).build(),
+                Product.builder().id(4L).name("Product 4").price(400L).build(),
+                Product.builder().id(5L).name("Product 5").price(500L).build()
         );
 
-        // Shuffle the list to ensure it is not in order
-        Collections.shuffle(orderItems);
     }
 
     @Test
@@ -95,21 +88,25 @@ public class ProductServiceTest {
     @DisplayName("상위 상품 조회 - 성공")
     void getTopProductsSuccess() {
         // given
-        List<OrderItem> topOrderItems = orderItems.subList(0, 5); // 상위 5개 아이템만 반환하도록 설정
-        given(orderItemRepository.findTopProducts(PageRequest.of(0, 5))).willReturn(topOrderItems);
+        List<Long> topProductIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
+        given(orderItemRepository.findTopProductIds(PageRequest.of(0, 5))).willReturn(topProductIds);
+        given(productRepository.findById(1L)).willReturn(Optional.of(products.get(0)));
+        given(productRepository.findById(2L)).willReturn(Optional.of(products.get(1)));
+        given(productRepository.findById(3L)).willReturn(Optional.of(products.get(2)));
+        given(productRepository.findById(4L)).willReturn(Optional.of(products.get(3)));
+        given(productRepository.findById(5L)).willReturn(Optional.of(products.get(4)));
 
         // when
-        List<OrderItem> topProducts = productService.getTopProducts();
+        List<Product> topProducts = productService.getTopProducts();
 
         // then
         assertThat(topProducts).isNotNull();
         assertThat(topProducts.size()).isEqualTo(5);
 
-
         // 상위 5개의 아이템을 예상 순서대로 정렬
         List<Long> expectedProductIds = Arrays.asList(1L, 2L, 3L, 4L, 5L);
         for (int i = 0; i < 5; i++) {
-            assertThat(topProducts.get(i).getProductId()).isEqualTo(expectedProductIds.get(i));
+            assertThat(topProducts.get(i).getId()).isEqualTo(expectedProductIds.get(i));
         }
     }
 }

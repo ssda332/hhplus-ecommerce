@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/product")
@@ -27,10 +28,10 @@ public class ProductController {
     // 상위 상품 조회 API
     @GetMapping("/top")
     public List<ProductDetailResponseDto> getTopProducts() {
-        List<OrderItem> topProducts = productService.getTopProducts();
+        List<Product> topProducts = productService.getTopProducts();
         return topProducts.stream()
-                .map(productMapper::orderItemtoProductDetailDto)
-                .toList();
+                .flatMap(product -> productMapper.mapProductOptions(product).stream())
+                .collect(Collectors.toList());
     }
 
     // 상품 정보 조회 API

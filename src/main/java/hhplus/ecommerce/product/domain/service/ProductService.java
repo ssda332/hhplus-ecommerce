@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -30,7 +32,15 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public List<OrderItem> getTopProducts() {
-        return orderItemRepository.findTopProducts(PageRequest.of(0, 5));
+    public List<Product> getTopProducts() {
+
+        List<Long> topProductIds = orderItemRepository.findTopProductIds(PageRequest.of(0, 5));
+
+        return topProductIds.stream()
+                .map(productRepository::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toList());
+
     }
 }
