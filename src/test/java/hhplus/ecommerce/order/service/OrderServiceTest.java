@@ -2,7 +2,7 @@ package hhplus.ecommerce.order.service;
 
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.domain.repository.BalanceRepository;
-import hhplus.ecommerce.exception.MemberNotFoundException;
+import hhplus.ecommerce.balance.exception.InsufficientBalanceException;
 import hhplus.ecommerce.order.domain.dto.OrderAppRequest;
 import hhplus.ecommerce.order.domain.entity.Order;
 import hhplus.ecommerce.order.domain.service.OrderService;
@@ -111,7 +111,7 @@ public class OrderServiceTest {
 
     @Test
     @DisplayName("주문 생성 성공")
-    void createOrder_Success() {
+    void createOrder_Success() throws InsufficientBalanceException {
         // given
         Balance balance = Balance.builder().memberId(1L).amount(10000L).build();
 
@@ -207,8 +207,8 @@ public class OrderServiceTest {
 
         // when & then
         assertThatThrownBy(() -> orderService.createOrder(appRequest))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("잔액 없음");
+                .isInstanceOf(InsufficientBalanceException.class);
+                //.hasMessage("잔액이 부족합다.");
 
         then(orderSheetRepository).should(times(1)).findById(1L);
         then(productRepository).should(times(3)).findById(any(Long.class));

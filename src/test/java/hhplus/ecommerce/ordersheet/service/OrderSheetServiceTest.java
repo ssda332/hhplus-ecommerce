@@ -51,8 +51,11 @@ public class OrderSheetServiceTest {
         product.setId(1L);
         ProductOption productOption = new ProductOption();
         productOption.setId(1L);
-        ProductOptionStock productOptionStock = new ProductOptionStock();
-        productOptionStock.setStock(10L);
+        //ProductOptionStock productOptionStock = new ProductOptionStock();
+        //productOptionStock.setStock(10L);
+        ProductOptionStock productOptionStock = ProductOptionStock.builder()
+                .stock(10L)
+                .build();
         productOption.setProductOptionStock(productOptionStock);
         product.setProductOptions(Collections.singletonList(productOption));
 
@@ -82,8 +85,11 @@ public class OrderSheetServiceTest {
         product.setId(1L);
         ProductOption productOption = new ProductOption();
         productOption.setId(1L);
-        ProductOptionStock productOptionStock = new ProductOptionStock();
-        productOptionStock.setStock(10L);
+        //ProductOptionStock productOptionStock = new ProductOptionStock();
+        //productOptionStock.setStock(10L);
+        ProductOptionStock productOptionStock = ProductOptionStock.builder()
+                .stock(10L)
+                .build();
         productOption.setProductOptionStock(productOptionStock);
         product.setProductOptions(Collections.singletonList(productOption));
 

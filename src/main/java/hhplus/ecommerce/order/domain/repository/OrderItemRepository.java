@@ -7,13 +7,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 @Repository
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-    @Query("SELECT new hhplus.ecommerce.order.domain.entity.OrderItem(oi.productId, oi.productName, SUM(oi.productPrice), SUM(oi.productCount)) " +
-            "FROM OrderItem oi " +
-            "GROUP BY oi.productId, oi.productName " +
-            "ORDER BY SUM(oi.productCount) DESC")
-    List<OrderItem> findTopProducts(Pageable pageable);
+    @Query("SELECT oi.productId FROM OrderItem oi GROUP BY oi.productId ORDER BY COUNT(oi) DESC")
+    List<Long> findTopProductIds(Pageable pageable);
 }

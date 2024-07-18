@@ -2,7 +2,8 @@ package hhplus.ecommerce.order.domain.service;
 
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.domain.repository.BalanceRepository;
-import hhplus.ecommerce.exception.MemberNotFoundException;
+import hhplus.ecommerce.balance.exception.InsufficientBalanceException;
+import hhplus.ecommerce.balance.exception.MemberNotFoundException;
 import hhplus.ecommerce.order.domain.dto.OrderAppRequest;
 import hhplus.ecommerce.order.domain.entity.Order;
 import hhplus.ecommerce.order.domain.entity.OrderItem;
@@ -16,8 +17,8 @@ import hhplus.ecommerce.product.domain.entity.Product;
 import hhplus.ecommerce.product.domain.entity.ProductOption;
 import hhplus.ecommerce.product.domain.entity.ProductOptionStock;
 import hhplus.ecommerce.product.domain.repository.ProductRepository;
+import hhplus.ecommerce.product.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +31,6 @@ public class OrderService {
 
 
     private final OrderRepository orderRepository;
-    private final OrderItemRepository orderItemRepository;
     private final OrderSheetRepository orderSheetRepository;
     private final ProductRepository productRepository;
     private final BalanceRepository balanceRepository;
@@ -38,7 +38,7 @@ public class OrderService {
 
 
     @Transactional
-    public Order createOrder(OrderAppRequest appRequest) {
+    public Order createOrder(OrderAppRequest appRequest) throws InsufficientBalanceException {
         // 유효한 주문서 찾기
         OrderSheet orderSheet = orderSheetRepository.findById(appRequest.memberId())
                 .orElseThrow(() -> new RuntimeException("주문서 없음"));
@@ -49,19 +49,9 @@ public class OrderService {
 
         for (OrderSheetItem item : orderSheetItems) {
             Product product = productRepository.findById(item.getProductId())
-                    .orElseThrow(() -> new RuntimeException("상품 없음"));
+                    .orElseThrow(() -> new ProductNotFoundException("상품 없음"));
 
-            for (ProductOption productOption : product.getProductOptions()) {
-                if (productOption.getId() != item.getProductOptionId()) continue;
-                ProductOptionStock productOptionStock = productOption.getProductOptionStock();
-
-                Long stock = productOptionStock.getStock();
-                Long calculate = stock - item.getProductCount();
-                if (calculate < 0) throw new RuntimeException("재고 없음");
-
-                // 재고 차감
-                productOptionStock.setStock(calculate);
-            }
+            product.decreaseStock(item);
 
             // 차감금액 계산
             Long calculatePrice = item.getProductCount() * item.getProductPrice();
@@ -72,12 +62,8 @@ public class OrderService {
         Balance balance = balanceRepository.findByMemberId(orderSheet.getMemberId())
                 .orElseThrow(() -> new MemberNotFoundException("멤버 없음"));
 
-        Long current = balance.getAmount();
-        Long result = current - sumPrice;
-        if (result < 0) throw new RuntimeException("잔액 없음");
-
         // 잔액차감
-        balance.setAmount(result);
+        balance.decreaseAmount(sumPrice);
 
         // Order 생성
         Order order = orderMapper.toEntity(orderSheet, sumPrice);
@@ -93,11 +79,6 @@ public class OrderService {
         Order savedOrder = orderRepository.save(order);
 
         return savedOrder;
-    }
-
-    @Transactional(readOnly = true)
-    public List<OrderItem> getTopProducts() {
-        return orderItemRepository.findTopProducts(PageRequest.of(0, 5));
     }
 
 }

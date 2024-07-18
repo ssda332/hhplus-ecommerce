@@ -1,5 +1,6 @@
 package hhplus.ecommerce.order.controller;
 
+import hhplus.ecommerce.balance.exception.InsufficientBalanceException;
 import hhplus.ecommerce.order.controller.dto.OrderRequestDto;
 import hhplus.ecommerce.order.controller.dto.OrderResponseDto;
 import hhplus.ecommerce.order.domain.service.OrderService;
@@ -20,7 +21,7 @@ public class OrderController {
 
     // 주문 API
     @PostMapping("")
-    public OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequestDto) {
+    public OrderResponseDto createOrder(@RequestBody OrderRequestDto orderRequestDto) throws InsufficientBalanceException {
 
         return orderMapper.toDto(orderService.createOrder(orderMapper.toAppDto(orderRequestDto)));
     }

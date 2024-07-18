@@ -5,10 +5,11 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "order_item")
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
+//@Setter
 @Builder
 public class OrderItem {
     @Id
