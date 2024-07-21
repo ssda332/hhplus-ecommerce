@@ -1,11 +1,12 @@
-package hhplus.ecommerce.balance.controller;
+package hhplus.ecommerce.balance.presentation;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import hhplus.ecommerce.balance.domain.dto.BalanceCommand;
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.domain.service.BalanceService;
-import hhplus.ecommerce.balance.controller.dto.BalanceRequestDto;
-import hhplus.ecommerce.balance.controller.dto.BalanceResponseDto;
+import hhplus.ecommerce.balance.presentation.dto.BalanceRequestDto;
+import hhplus.ecommerce.balance.presentation.dto.BalanceResponseDto;
 import hhplus.ecommerce.balance.mapper.BalanceMapper;
 import hhplus.ecommerce.config.WebConfig;
 import hhplus.ecommerce.balance.exception.MemberNotFoundException;
@@ -113,7 +114,7 @@ public class BalanceControllerTest {
         given(memberInterceptor.preHandle(any(), any(), any())).willReturn(true);
 
         //when
-        given(balanceService.chargeBalance(any(Balance.class))).willReturn(balance);
+        given(balanceService.chargeBalance(any(BalanceCommand.Charge.class))).willReturn(balance);
         given(balanceMapper.toDto(any(Balance.class))).willReturn(responseDto);
         given(balanceMapper.toEntity(any(BalanceRequestDto.class))).willReturn(balance);
 

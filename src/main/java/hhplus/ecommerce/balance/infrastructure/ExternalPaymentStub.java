@@ -1,7 +1,5 @@
 package hhplus.ecommerce.balance.infrastructure;
 
-import hhplus.ecommerce.balance.controller.dto.PaymentRequestDto;
-import hhplus.ecommerce.balance.controller.dto.PaymentResponseDto;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;

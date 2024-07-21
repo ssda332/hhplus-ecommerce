@@ -1,12 +1,14 @@
-package hhplus.ecommerce.balance.controller;
+package hhplus.ecommerce.balance.presentation;
 
-import hhplus.ecommerce.balance.controller.dto.BalanceResponseDto;
+import hhplus.ecommerce.balance.application.BalanceFacade;
+import hhplus.ecommerce.balance.domain.dto.BalanceDto;
+import hhplus.ecommerce.balance.presentation.dto.BalanceResponseDto;
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.mapper.BalanceMapper;
 import hhplus.ecommerce.balance.domain.service.BalanceService;
 import hhplus.ecommerce.balance.exception.MemberNotFoundException;
-import hhplus.ecommerce.balance.controller.dto.PaymentRequestDto;
-import hhplus.ecommerce.balance.controller.dto.PaymentResponseDto;
+import hhplus.ecommerce.balance.presentation.dto.PaymentRequestDto;
+import hhplus.ecommerce.balance.presentation.dto.PaymentResponseDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,21 +21,22 @@ public class BalanceController {
 
     private final BalanceMapper balanceMapper;
     private final BalanceService balanceService;
+    private final BalanceFacade balanceFacade;
 
     // 잔액 충전 API
     @PostMapping("/charge")
     public BalanceResponseDto chargeBalance(@RequestHeader("MEMBER_ID") Long memberId, @RequestParam Long amount) throws MemberNotFoundException {
-        Balance balance = Balance.builder()
+        BalanceDto balance = BalanceDto.builder()
                 .memberId(memberId)
                 .amount(amount)
                 .build();
-        return balanceMapper.toDto(balanceService.chargeBalance(balance));
+        return balanceMapper.toDto(balanceFacade.chargeBalance(balance));
     }
 
     // 잔액 조회 API
     @GetMapping("")
     public BalanceResponseDto getBalance(@RequestHeader("MEMBER_ID") Long memberId) throws MemberNotFoundException {
-        return balanceMapper.toDto(balanceService.findBalance(memberId));
+        return balanceMapper.toDto(balanceFacade.getBalance(memberId));
     }
 
     // 결제 API

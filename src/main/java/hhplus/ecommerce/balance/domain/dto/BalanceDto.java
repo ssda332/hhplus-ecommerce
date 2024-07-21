@@ -1,9 +1,9 @@
-package hhplus.ecommerce.balance.controller.dto;
+package hhplus.ecommerce.balance.domain.dto;
 
 import lombok.Builder;
 
 @Builder
-public record BalanceRequestDto(
+public record BalanceDto(
         Long memberId,
         Long amount
 ) {

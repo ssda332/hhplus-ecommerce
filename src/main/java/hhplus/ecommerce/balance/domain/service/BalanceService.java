@@ -1,5 +1,6 @@
 package hhplus.ecommerce.balance.domain.service;
 
+import hhplus.ecommerce.balance.domain.dto.BalanceCommand;
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.domain.repository.BalanceRepository;
 import hhplus.ecommerce.balance.infrastructure.ExternalPaymentStub;
@@ -24,14 +25,10 @@ public class BalanceService {
     }
 
     @Transactional
-    public Balance chargeBalance(Balance entity) throws MemberNotFoundException {
-        Long memberId = entity.getMemberId();
-
-        Balance current = balanceRepository.findByMemberId(memberId).orElseThrow(() -> new MemberNotFoundException("사용자가 존재하지 않습니다."));
-        Long sum = current.getAmount() + entity.getAmount();
-
-        current.chargeAmount(sum);
-        return current;
+    public Balance chargeBalance(BalanceCommand.Charge command) {
+        Balance balance = command.balance();
+        balance.chargeAmount(command.amount());
+        return balance;
     }
 
     @Transactional
@@ -39,9 +36,9 @@ public class BalanceService {
         PaymentInfraResponseDto paymentInfraResponseDto = externalPaymentStub.processPayment(balanceMapper.toInfraDto(balance));
 
         if (paymentInfraResponseDto.status().equals("SUCCESS")) {
-            Balance result = chargeBalance(balance);
+            //Balance result = chargeBalance(balance);
 
-            return result;
+            return null;
         } else {
             throw new Exception();
         }

@@ -21,8 +21,8 @@ public class Balance {
     @Column
     private Long amount;
 
-    public void chargeAmount(Long amount) {
-        this.amount = amount;
+    public void chargeAmount(Long chargeAmount) {
+        this.amount = this.amount + chargeAmount;
     }
 
     public void decreaseAmount(Long amountToSubtract) throws InsufficientBalanceException {
