@@ -83,6 +83,6 @@ public class PaymentIntegrationTest {
         assertEquals(1, payments.size(), "한개의 결제정보만 만들어져야함");
 
         Balance balance = balanceRepository.findByMemberId(MEMBER_ID).orElseThrow();
-        assertEquals(1000L + AMOUNT, balance.getAmount(), "잔액이 맞는지 확인");
+        assertEquals(1000L + AMOUNT, balance.getAmount(), "잔액이 맞는지 확인 ");
     }
 }

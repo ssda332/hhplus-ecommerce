@@ -59,7 +59,7 @@ public class OrderIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        // Product 저장
+        // Product 저장.
         Product product = Product.builder()
                 .name("Sample Product")
                 .price(1000L)
