@@ -3,6 +3,9 @@ package hhplus.ecommerce.product.domain.service;
 import hhplus.ecommerce.order.domain.entity.OrderItem;
 import hhplus.ecommerce.order.domain.repository.OrderItemRepository;
 import hhplus.ecommerce.product.domain.entity.Product;
+import hhplus.ecommerce.product.domain.entity.ProductOption;
+import hhplus.ecommerce.product.domain.entity.ProductOptionStock;
+import hhplus.ecommerce.product.domain.repository.ProductOptionRepository;
 import hhplus.ecommerce.product.domain.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +23,7 @@ import java.util.stream.Collectors;
 public class ProductService {
 
     private final ProductRepository productRepository;
+    private final ProductOptionRepository productOptionRepository;
     private final OrderItemRepository orderItemRepository;
 
     @Transactional
@@ -29,6 +33,15 @@ public class ProductService {
 
 
         return product;
+    }
+
+    @Transactional
+    public ProductOptionStock getProductOptionStock(Long productOptionId) {
+        ProductOption productOption = productOptionRepository.findById(productOptionId)
+                .orElseThrow(() -> new RuntimeException("상품옵션이 없습니다."));
+
+        ProductOptionStock productOptionStock = productOption.getProductOptionStock();
+        return productOptionStock;
     }
 
     @Transactional(readOnly = true)

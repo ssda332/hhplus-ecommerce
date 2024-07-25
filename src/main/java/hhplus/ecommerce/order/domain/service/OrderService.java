@@ -16,6 +16,7 @@ import hhplus.ecommerce.order.mapper.OrderMapper;
 import hhplus.ecommerce.product.domain.entity.Product;
 import hhplus.ecommerce.product.domain.entity.ProductOption;
 import hhplus.ecommerce.product.domain.entity.ProductOptionStock;
+import hhplus.ecommerce.product.domain.repository.ProductOptionStockRepository;
 import hhplus.ecommerce.product.domain.repository.ProductRepository;
 import hhplus.ecommerce.product.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final OrderSheetRepository orderSheetRepository;
-    private final ProductRepository productRepository;
+    private final ProductOptionStockRepository productOptionStockRepository;
     private final BalanceRepository balanceRepository;
     private final OrderMapper orderMapper;
 
@@ -48,10 +49,10 @@ public class OrderService {
         Long sumPrice = 0L;
 
         for (OrderSheetItem item : orderSheetItems) {
-            Product product = productRepository.findById(item.getProductId())
+            ProductOptionStock stock = productOptionStockRepository.findByProductOptionIdForUpdate(item.getProductOptionId())
                     .orElseThrow(() -> new ProductNotFoundException("상품 없음"));
 
-            product.decreaseStock(item);
+            stock.decreaseStock(item);
 
             // 차감금액 계산
             Long calculatePrice = item.getProductCount() * item.getProductPrice();

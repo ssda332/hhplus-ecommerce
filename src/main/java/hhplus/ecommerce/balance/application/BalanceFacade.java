@@ -4,6 +4,7 @@ import hhplus.ecommerce.balance.domain.dto.BalanceCommand;
 import hhplus.ecommerce.balance.domain.dto.BalanceDto;
 import hhplus.ecommerce.balance.domain.entity.Balance;
 import hhplus.ecommerce.balance.domain.service.BalanceService;
+import hhplus.ecommerce.payment.domain.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Component;
 public class BalanceFacade {
 
     private final BalanceService balanceService;
+    private final PaymentService paymentService;
 
     public Balance getBalance(Long memberId) {
         Balance balance = balanceService.findBalance(memberId);

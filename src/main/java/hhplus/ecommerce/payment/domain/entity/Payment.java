@@ -1,17 +1,15 @@
-package hhplus.ecommerce.ordersheet.domain.entity;
+package hhplus.ecommerce.payment.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-@Setter
 @Builder
-public class OrderSheet {
+public class Payment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,21 +18,18 @@ public class OrderSheet {
     private Long memberId;
 
     @Column(nullable = false)
-    private String address;
-
-    @Column(nullable = false)
-    private String phone;
+    private Long orderSheetId;
 
     @Column
-    private String comment;
+    private Long orderId;
 
-    @Enumerated(EnumType.STRING)
+    @Column
+    private Long approvalNumber;
+
     @Column(nullable = false)
-    private PaymentStatus paymentStatus;
+    private Long amount;
 
     @Column(nullable = false)
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "orderSheet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<OrderSheetItem> orderSheetItems;
 }

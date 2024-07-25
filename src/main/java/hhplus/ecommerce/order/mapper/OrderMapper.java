@@ -1,6 +1,6 @@
 package hhplus.ecommerce.order.mapper;
 
-import hhplus.ecommerce.order.controller.dto.*;
+import hhplus.ecommerce.order.presentation.dto.*;
 import hhplus.ecommerce.order.domain.dto.OrderAppRequest;
 import hhplus.ecommerce.order.domain.entity.Order;
 import hhplus.ecommerce.order.domain.entity.OrderItem;

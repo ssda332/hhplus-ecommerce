@@ -5,6 +5,7 @@ import lombok.Getter;
 @Getter
 public enum ErrorCode {
 
+    INTERNAL_SERVER_ERROR("CM_000", "서버 에러", 500),
     MEMBER_NOT_FOUND("CM_001", "사용자를 찾을 수 없습니다.", 404),
     INSUFFICIENT_BALANCE("CM_002", "잔액이 부족합니다.", 400),
 

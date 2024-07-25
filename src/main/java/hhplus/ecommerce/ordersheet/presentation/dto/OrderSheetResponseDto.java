@@ -1,4 +1,4 @@
-package hhplus.ecommerce.ordersheet.controller.dto;
+package hhplus.ecommerce.ordersheet.presentation.dto;
 
 import lombok.Builder;
 
@@ -14,5 +14,5 @@ public record OrderSheetResponseDto(
         String comment,
         Long totalPrice,
         LocalDateTime createDate,
-        List<OrderSheetItemDto> orderSheetItems
+        List<OrderSheetItemRequestDto> orderSheetItems
 ) {}

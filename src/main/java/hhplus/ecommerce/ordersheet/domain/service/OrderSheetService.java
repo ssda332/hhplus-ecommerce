@@ -1,12 +1,13 @@
 package hhplus.ecommerce.ordersheet.domain.service;
 
+import hhplus.ecommerce.ordersheet.domain.dto.OrderSheetDto;
+import hhplus.ecommerce.ordersheet.domain.dto.OrderSheetItemDto;
 import hhplus.ecommerce.ordersheet.domain.entity.OrderSheet;
-import hhplus.ecommerce.ordersheet.domain.entity.OrderSheetItem;
 import hhplus.ecommerce.ordersheet.domain.repository.OrderSheetRepository;
-import hhplus.ecommerce.product.domain.entity.Product;
+import hhplus.ecommerce.ordersheet.mapper.OrderSheetMapper;
 import hhplus.ecommerce.product.domain.entity.ProductOption;
 import hhplus.ecommerce.product.domain.entity.ProductOptionStock;
-import hhplus.ecommerce.product.domain.repository.ProductRepository;
+import hhplus.ecommerce.product.domain.repository.ProductOptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,29 +19,23 @@ import java.util.List;
 public class OrderSheetService {
 
     private final OrderSheetRepository orderSheetRepository;
-    private final ProductRepository productRepository;
+    private final ProductOptionRepository productOptionRepository;
+    private final OrderSheetMapper orderSheetMapper;
 
     @Transactional
-    public OrderSheet createOrderSheet(OrderSheet orderSheet) {
+    public OrderSheet createOrderSheet(OrderSheetDto orderSheetDto) {
+        OrderSheet orderSheet = orderSheetMapper.toEntity(orderSheetDto);
+        return orderSheetRepository.save(orderSheet);
+    }
 
-        // 재고확인
-        List<OrderSheetItem> orderSheetItems = orderSheet.getOrderSheetItems();
-
-        for (OrderSheetItem item : orderSheetItems) {
-            Product product = productRepository.findById(item.getProductId())
+    public void checkOrderSheetItemList(List<OrderSheetItemDto> list) {
+        list.stream().forEach(item -> {
+            ProductOption productOption = productOptionRepository.findById(item.productOptionId())
                     .orElseThrow(() -> new RuntimeException("상품 없음"));
 
-            for (ProductOption productOption : product.getProductOptions()) {
-                if (!productOption.getId().equals(item.getProductOptionId())) continue;
-                ProductOptionStock productOptionStock = productOption.getProductOptionStock();
-
-                Long stock = productOptionStock.getStock();
-                Long calculate = stock - item.getProductCount();
-                if (calculate < 0) throw new RuntimeException("재고 없음");
-            }
-        }
-
-        return orderSheetRepository.save(orderSheet);
+            ProductOptionStock productOptionStock = productOption.getProductOptionStock();
+            productOptionStock.checkStock();
+        });
     }
 
     @Transactional(readOnly = true)

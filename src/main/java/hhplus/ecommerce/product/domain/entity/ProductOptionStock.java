@@ -23,10 +23,13 @@ public class ProductOptionStock {
     private ProductOption productOption;
 
     public void decreaseStock(OrderSheetItem item) {
+        checkStock();
         Long calculate = this.stock - item.getProductCount();
-        if (calculate < 0) throw new InsufficientStockException("재고 없음");
-
         this.stock = calculate;
+    }
+
+    public void checkStock() {
+        if (this.stock < 1) throw new InsufficientStockException("재고 없음");
     }
 
 }

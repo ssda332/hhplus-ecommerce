@@ -9,6 +9,7 @@ import hhplus.ecommerce.balance.mapper.BalanceMapper;
 import hhplus.ecommerce.balance.exception.MemberNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -16,31 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class BalanceService {
 
     private final BalanceRepository balanceRepository;
-    private final ExternalPaymentStub externalPaymentStub;
-    private final BalanceMapper balanceMapper;
 
-    @Transactional
+    //@Transactional(propagation = Propagation.REQUIRES_NEW)
     public Balance findBalance(Long memberId) throws MemberNotFoundException {
         return balanceRepository.findByMemberId(memberId).orElseThrow(() -> new MemberNotFoundException("사용자가 존재하지 않습니다."));
     }
 
-    @Transactional
+    //@Transactional(propagation = Propagation.REQUIRES_NEW)
     public Balance chargeBalance(BalanceCommand.Charge command) {
         Balance balance = command.balance();
         balance.chargeAmount(command.amount());
         return balance;
     }
 
-    @Transactional
-    public Balance processPayment(Balance balance) throws Exception {
-        PaymentInfraResponseDto paymentInfraResponseDto = externalPaymentStub.processPayment(balanceMapper.toInfraDto(balance));
-
-        if (paymentInfraResponseDto.status().equals("SUCCESS")) {
-            //Balance result = chargeBalance(balance);
-
-            return null;
-        } else {
-            throw new Exception();
-        }
-    }
 }

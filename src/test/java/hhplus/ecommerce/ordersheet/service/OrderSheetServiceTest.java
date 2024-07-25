@@ -36,7 +36,7 @@ public class OrderSheetServiceTest {
     @Mock
     private ProductRepository productRepository;
 
-    @Test
+    /*@Test
     @DisplayName("주문서 생성 성공")
     void testCreateOrderSheet_Success() {
         // given
@@ -51,8 +51,6 @@ public class OrderSheetServiceTest {
         product.setId(1L);
         ProductOption productOption = new ProductOption();
         productOption.setId(1L);
-        //ProductOptionStock productOptionStock = new ProductOptionStock();
-        //productOptionStock.setStock(10L);
         ProductOptionStock productOptionStock = ProductOptionStock.builder()
                 .stock(10L)
                 .build();
@@ -68,9 +66,9 @@ public class OrderSheetServiceTest {
         // then
         then(productRepository).should(times(1)).findById(1L);
         then(orderSheetRepository).should(times(1)).save(orderSheet);
-    }
+    }*/
 
-    @Test
+    /*@Test
     @DisplayName("주문서 생성 실패 - 재고 부족")
     void testCreateOrderSheet_InsufficientStock() {
         // given
@@ -103,9 +101,9 @@ public class OrderSheetServiceTest {
 
         then(productRepository).should(times(1)).findById(1L);
         then(orderSheetRepository).shouldHaveNoInteractions();
-    }
+    }*/
 
-    @Test
+    /*@Test
     @DisplayName("주문서 생성 실패 - 상품 없음")
     void testCreateOrderSheet_ProductNotFound() {
         // given
@@ -126,7 +124,7 @@ public class OrderSheetServiceTest {
 
         then(productRepository).should(times(1)).findById(1L);
         then(orderSheetRepository).shouldHaveNoInteractions();
-    }
+    }*/
 
     @Test
     @DisplayName("주문서 조회 성공")

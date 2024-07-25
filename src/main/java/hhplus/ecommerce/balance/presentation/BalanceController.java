@@ -20,7 +20,6 @@ import java.time.LocalDateTime;
 public class BalanceController {
 
     private final BalanceMapper balanceMapper;
-    private final BalanceService balanceService;
     private final BalanceFacade balanceFacade;
 
     // 잔액 충전 API
@@ -39,7 +38,7 @@ public class BalanceController {
         return balanceMapper.toDto(balanceFacade.getBalance(memberId));
     }
 
-    // 결제 API
+    /*// 결제 API
     @PostMapping("/payment")
     public PaymentResponseDto payment(@RequestHeader("MEMBER_ID") Long memberId, @RequestBody PaymentRequestDto paymentRequest) {
         Long paymentId = 1L;
@@ -48,5 +47,5 @@ public class BalanceController {
 
         return new PaymentResponseDto(paymentId, memberId, paymentRequest.orderSheetId(),
                 paymentRequest.amount(), status, paymentDate);
-    }
+    }*/
 }
