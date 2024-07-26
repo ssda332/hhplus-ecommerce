@@ -15,4 +15,6 @@ public interface ProductOptionStockRepository extends JpaRepository<ProductOptio
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT pos FROM ProductOptionStock pos WHERE pos.productOption.id = :productOptionId")
     Optional<ProductOptionStock> findByProductOptionIdForUpdate(@Param("productOptionId") Long productOptionId);
+
+    Optional<ProductOptionStock> findByProductOptionId(Long productOptionId);
 }

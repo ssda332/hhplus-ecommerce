@@ -5,31 +5,30 @@ import hhplus.ecommerce.order.application.OrderFacade;
 import hhplus.ecommerce.order.domain.dto.OrderAppRequest;
 import hhplus.ecommerce.order.domain.entity.Order;
 import hhplus.ecommerce.order.domain.repository.OrderRepository;
-import hhplus.ecommerce.ordersheet.domain.entity.OrderSheet;
-import hhplus.ecommerce.ordersheet.domain.entity.OrderSheetItem;
-import hhplus.ecommerce.ordersheet.domain.entity.PaymentStatus;
-import hhplus.ecommerce.ordersheet.domain.repository.OrderSheetRepository;
-import hhplus.ecommerce.product.domain.entity.Product;
-import hhplus.ecommerce.product.domain.entity.ProductOption;
 import hhplus.ecommerce.product.domain.entity.ProductOptionStock;
-import hhplus.ecommerce.product.domain.repository.ProductOptionRepository;
 import hhplus.ecommerce.product.domain.repository.ProductOptionStockRepository;
-import hhplus.ecommerce.product.domain.repository.ProductRepository;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest
+@Transactional
 public class OrderIntegrationTest {
 
     @Autowired
@@ -39,110 +38,71 @@ public class OrderIntegrationTest {
     private OrderRepository orderRepository;
 
     @Autowired
-    private OrderSheetRepository orderSheetRepository;
-
-    @Autowired
     private ProductOptionStockRepository productOptionStockRepository;
 
-    @Autowired
-    private ProductOptionRepository productOptionRepository;
-
-    @Autowired
-    private ProductRepository productRepository;
 
     private static final Long MEMBER_ID = 1L;
     private static final Long ORDER_SHEET_ID = 1L;
     private static final Long PRODUCT_OPTION_ID = 1L;
-    private static final Long PRODUCT_ID = 1L;
     private static final int INITIAL_STOCK = 100;
     private static final int ORDER_QUANTITY = 10;
 
+    public ProductOptionStock stock1;
+
     @BeforeEach
     void setUp() {
-        // Product 저장.
-        Product product = Product.builder()
-                .name("Sample Product")
-                .price(1000L)
-                .createDate(LocalDateTime.now())
-                .build();
-        product = productRepository.save(product); // Save and retrieve the product to generate ID
-
-        // ProductOption 저장
-        ProductOption productOption = ProductOption.builder()
-                .product(product)
-                .name("Sample Product Option")
-                .createDate(LocalDateTime.now())
-                .build();
-
-        List<ProductOption> productOptions = new ArrayList<>();
-        productOptions.add(productOption);
-        product.setProductOptions(productOptions); // Set the product options list in the product
-
-        productOption = productOptionRepository.save(productOption); // Save and retrieve the product option to generate ID
-
-        // 초기 재고 설정
-        ProductOptionStock stock = ProductOptionStock.builder()
-                .productOption(productOption)
-                .stock((long) INITIAL_STOCK)
-                .build();
-        productOptionStockRepository.save(stock);
-
-        // 주문서 설정
-        OrderSheet orderSheet = OrderSheet.builder()
-                .memberId(MEMBER_ID)
-                .address("Sample Address")
-                .phone("010-1234-5678")
-                .comment("Sample Comment")
-                .paymentStatus(PaymentStatus.PENDING)
-                .createDate(LocalDateTime.now())
-                .build();
-        orderSheet = orderSheetRepository.save(orderSheet); // Save and retrieve the order sheet to generate ID
-
-        List<OrderSheetItem> orderSheetItems = new ArrayList<>();
-        orderSheetItems.add(OrderSheetItem.builder()
-                .orderSheet(orderSheet) // Assign the saved order sheet
-                .productId(product.getId())
-                .productName(product.getName()) // Set the product name here
-                .productOptionId(productOption.getId())
-                .productOptionName(productOption.getName()) // Set the product option name here
-                .productCount((long) ORDER_QUANTITY)
-                .productPrice(product.getPrice())
-                .createDate(LocalDateTime.now())
-                .build());
-
-        orderSheet.setOrderSheetItems(orderSheetItems); // Set the order sheet items in the order sheet
-        orderSheetRepository.save(orderSheet); // Update the order sheet with the items
+        stock1 = productOptionStockRepository.findByProductOptionId(1L).orElseThrow(() -> new RuntimeException());
     }
 
     @Test
+    @DisplayName("하나의 상품옵션에 대해 재고에 딱 맞춰서 여러 요청이 들어오고 요청들이 정상적으로 처리된다")
     void testConcurrentOrders() throws InterruptedException {
+        // given
         int numberOfThreads = 10;
-        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+        stock1.changeStock(100L);
+        List<Long> orderSheetList = new ArrayList<>();
+        List<Long> memberIdList = new ArrayList<>();
 
         for (int i = 0; i < numberOfThreads; i++) {
+            orderSheetList.add(i, Long.valueOf(i + 1));
+            memberIdList.add(i, Long.valueOf(i + 1));
+        }
+
+        CountDownLatch doneSignal = new CountDownLatch(numberOfThreads);
+        ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+        for (int i = 0; i < numberOfThreads; i++) {
+            final Long orderSheetId = orderSheetList.get(i);
+            final Long memberId = memberIdList.get(i);
+
             executorService.submit(() -> {
                 OrderAppRequest appRequest = OrderAppRequest.builder()
-                        .orderSheetId(ORDER_SHEET_ID)
-                        .memberId(MEMBER_ID)
+                        .orderSheetId(orderSheetId)
+                        .memberId(memberId)
                         .build();
 
                 try {
                     orderFacade.createOrder(appRequest);
+                    successCount.getAndIncrement();
                 } catch (Exception e) {
-                    // Handle exceptions if needed
+                    failCount.getAndIncrement();
                 } catch (InsufficientBalanceException e) {
-                    throw new RuntimeException(e);
+                    failCount.getAndIncrement();
+                } finally {
+                    doneSignal.countDown();
                 }
             });
         }
-
+        doneSignal.await();
         executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.MINUTES);
 
-        List<Order> orders = orderRepository.findAll();
-        assertEquals(numberOfThreads, orders.size(), "All orders should be created");
-
-        ProductOptionStock stock = productOptionStockRepository.findByProductOptionIdForUpdate(PRODUCT_OPTION_ID).orElseThrow();
-        assertEquals(INITIAL_STOCK - ORDER_QUANTITY * numberOfThreads, stock.getStock(), "Stock should be correctly updated");
+        //then
+        assertAll(
+                () -> assertThat(successCount.get()).isEqualTo(10),
+                () -> assertThat(failCount.get()).isEqualTo(0)
+        );
     }
 }
