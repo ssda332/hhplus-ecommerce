@@ -15,10 +15,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
@@ -33,31 +36,23 @@ public class PaymentIntegrationTest {
     @Autowired
     private BalanceRepository balanceRepository;
 
-    private static final Long MEMBER_ID = 2L;
-    private static final Long ORDER_SHEET_ID = 1L;
-    private static final Long APPROVAL_NUMBER = UUID.randomUUID().getLeastSignificantBits();
-    private static final Long AMOUNT = 100L;
-
-    @BeforeEach
-    void setUp() {
-        Balance balance = Balance.builder()
-                .memberId(MEMBER_ID)
-                .amount(1000L)
-                .build();
-
-        balanceRepository.save(balance);
-    }
-    @AfterEach
-    void tearDown() {
-        paymentRepository.deleteAll();
-        balanceRepository.deleteAll();
-    }
-
     @Test
     @DisplayName("동일 승인번호로 여러 결제 요청 시도")
     void testConcurrentPaymentRequests() throws InterruptedException {
+        // given
         int numberOfThreads = 10;
+        Long MEMBER_ID = 1L;
+        Long ORDER_SHEET_ID = 1L;
+        Long APPROVAL_NUMBER = UUID.randomUUID().getLeastSignificantBits();
+        Long AMOUNT = 1L;
+
+        CountDownLatch doneSignal = new CountDownLatch(numberOfThreads);
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
+
+        AtomicInteger successCount = new AtomicInteger();
+        AtomicInteger failCount = new AtomicInteger();
+
+
 
         for (int i = 0; i < numberOfThreads; i++) {
             executorService.submit(() -> {
@@ -70,19 +65,22 @@ public class PaymentIntegrationTest {
 
                 try {
                     paymentFacade.savePayment(paymentDto);
-                } catch (Exception e) {
-
+                    successCount.getAndIncrement();
+                } catch (RuntimeException e) {
+                    failCount.getAndIncrement();
+                } finally {
+                    doneSignal.countDown();
                 }
             });
         }
 
+        doneSignal.await();
         executorService.shutdown();
-        executorService.awaitTermination(1, TimeUnit.MINUTES);
 
-        List<Payment> payments = paymentRepository.findAll();
-        assertEquals(1, payments.size(), "한개의 결제정보만 만들어져야함");
-
-        Balance balance = balanceRepository.findByMemberId(MEMBER_ID).orElseThrow();
-        assertEquals(1000L + AMOUNT, balance.getAmount(), "잔액이 맞는지 확인 ");
+        //then
+        assertAll(
+                () -> assertThat(successCount.get()).isEqualTo(1),
+                () -> assertThat(failCount.get()).isEqualTo(9)
+        );
     }
 }

@@ -45,3 +45,4 @@ INSERT INTO order_sheet_item (id, order_sheet_id, product_id, product_name, prod
 INSERT INTO order_sheet_item (id, order_sheet_id, product_id, product_name, product_option_id, product_option_name, product_count, product_price, create_date) VALUES (8, 8, 1, '옷1', 1, '레드', 10, 1000, NOW());
 INSERT INTO order_sheet_item (id, order_sheet_id, product_id, product_name, product_option_id, product_option_name, product_count, product_price, create_date) VALUES (9, 9, 1, '옷1', 1, '레드', 10, 1000, NOW());
 INSERT INTO order_sheet_item (id, order_sheet_id, product_id, product_name, product_option_id, product_option_name, product_count, product_price, create_date) VALUES (10, 10, 1, '옷1', 1, '레드', 10, 1000, NOW());
+
